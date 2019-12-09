@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- jsp页面不解析EL表达式的值，需要在web-app中添加以下配置 -->
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+         http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>Archetype Created Web Application</display-name>
+
+  <!-- context-param整个项目的全局变量，param-name是键，param-value是值 -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>log4jConfigLocation</param-name>
+    <param-value>E:\Spring\papers2\src\main\resources\log4j.properties</param-value>
+  </context-param>
+
+  <!-- ContextLoaderListener作用是启动web服务器时自动装配applicationContext的配置信息，
+   声明Web容器监听器-->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+
+  <servlet>
+    <!-- 配置前端过滤器 -->
+    <servlet-name>spring-dispatcher</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!-- 初始化时加载配置文件spring-mvc.xml -->
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:spring-mvc.xml</param-value>
+    </init-param>
+    <!-- 表示容器在启动时立即加载servlet，当值为0或者大于0时，
+    表示容器自应用启动时加载并初始化这个servlet，正值越小，servlet优先级越高 -->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <!-- 声明servlet相应的匹配规则，每个servlet-name>标签代表一个匹配规则 -->
+  <servlet-mapping>
+    <servlet-name>spring-dispatcher</servlet-name>
+    <!-- url-pattern是url匹配规则，表示哪些请求交割spring mvc处理，
+    /表示拦截所有的请求并交给DispatcherServlet处理 -->
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+  <!-- 解决乱码 -->
+  <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>
+      org.springframework.web.filter.CharacterEncodingFilter
+    </filter-class>
+
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- shiro:过滤器，DelegatingFilterProxy通过代理模式将spring容器中的bean和filter关联起来 -->
+  <filter>
+    <filter-name>shiroFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    <!-- 设置true由servlet容器控制filter的生命周期 -->
+    <init-param>
+      <param-name>targetFilterLifecycle</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <!-- 设置spring容器filter的bean id，如果不设置targetBeanName则默认找与filter-name一致的bean -->
+    <init-param>
+      <param-name>targetBeanName</param-name>
+      <param-value>shiroFilter</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>shiroFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- 设置session超时时间 -->
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+
+</web-app>

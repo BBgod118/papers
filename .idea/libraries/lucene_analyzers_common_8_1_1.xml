@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="lucene-analyzers-common-8.1.1">
+    <CLASSES>
+      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/hanlp/lucene-analyzers-common-8.1.1.jar!/" />
+      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/hanlp/lucene-analyzers-smartcn-8.1.1.jar!/" />
+      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/hanlp/lucene-core-8.1.1.jar!/" />
+      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/hanlp/lucene-highlighter-8.1.1.jar!/" />
+      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/hanlp/lucene-queryparser-8.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

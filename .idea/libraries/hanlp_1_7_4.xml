@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="hanlp-1.7.4">
+    <CLASSES>
+      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/hanlp/hanlp-1.7.4.jar!/" />
+      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/hanlp/hanlp-lucene-plugin-1.1.6.jar!/" />
+      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/hanlp/hanlp-portable-1.7.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

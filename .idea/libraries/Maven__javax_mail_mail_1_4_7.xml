@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: javax.mail:mail:1.4.7">
+    <CLASSES>
+      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/javax/mail/mail/1.4.7/mail-1.4.7.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/javax/mail/mail/1.4.7/mail-1.4.7-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/javax/mail/mail/1.4.7/mail-1.4.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

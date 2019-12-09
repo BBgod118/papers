@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yt.dao.GetPermsDao">
+
+    <resultMap id="rolePerms" type="com.yt.pojo.RolePermission">
+        <id property="id" column="permission_id"/>
+        <result property="url" column="url"/>
+        <collection property="roleIds" column="role_id" ofType="Integer">
+            <constructor>
+                <arg column="role_id"/>
+            </constructor>
+        </collection>
+    </resultMap>
+
+    <select id="getPolePermission" resultMap="rolePerms">
+    SELECT p.permission_id, p.url, r.role_id FROM permission p LEFT JOIN role_permission r
+    on r.permission_id = p.permission_id;
+    </select>
+
+</mapper>

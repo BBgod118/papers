@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 读取db.properties文件 -->
+    <context:property-placeholder location="classpath:db.properties"/>
+    <!-- 配置数据源 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!-- 数据库驱动 -->
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <!-- 链接数据库的url -->
+        <property name="url" value="${jdbc.url}"/>
+        <!-- 链接数据库的用户名 -->
+        <property name="username" value="${jdbc.username}"/>
+        <!-- 链接数据库的密码 -->
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!-- 配置MyBatis工厂 -->
+    <bean id="sqlSessionFactory"  class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 注入数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 指定核心配置文件位置 -->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+
+    <!-- 接口开发 直接扫描dao包下的所有接口，不要再一一配置，简化开发-->
+    <bean id="mapperScannerConfigurer"
+          class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.yt.dao"/>
+    </bean>
+
+    <!-- 事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 通知 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="add*" isolation="REPEATABLE_READ" rollback-for="Exception"/>
+            <tx:method name="delete*" isolation="REPEATABLE_READ" rollback-for="Exception"/>
+            <tx:method name="update*" isolation="REPEATABLE_READ" rollback-for="Exception"/>
+            <tx:method name="get*" isolation="REPEATABLE_READ" read-only="true"/>
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="select*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="creat*" propagation="REQUIRED"/>
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="insert*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 切面切入点 -->
+    <aop:config>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.yt.service.*.*(..))"/>
+    </aop:config>
+
+    <!-- 扫描@Service注解 -->
+    <context:component-scan base-package="com.yt.service"/>
+
+
+    <!-- 1.配置securityManager -->
+    <bean id ="securityManager" class ="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="cacheManager" ref="cacheManager"/>
+        <property name="authenticator" ref="authenticator"/>
+
+        <!-- 配置realm，这里可以设置多个realm-->
+        <property name="realms">
+            <list>
+                <ref bean="userRealm"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 会话 ID 生成器 -->
+    <bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
+
+    <!-- 会话 DAO -->
+    <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+        <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
+    </bean>
+
+    <!-- 会话验证调度器，每 30 分钟执行一次验证 ，设定会话超时及保存 -->
+    <bean name="sessionValidationScheduler" class="org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler">
+        <property name="interval" value="1800000"/>
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+
+    <!-- 会话管理器 -->
+    <bean id="sessionManager"
+          class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <!-- 全局会话超时时间（单位毫秒），默认 30 分钟 -->
+        <property name="globalSessionTimeout" value="1800000"/>
+        <property name="deleteInvalidSessions" value="true"/>
+        <property name="sessionValidationSchedulerEnabled" value="true"/>
+        <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>
+        <property name="sessionDAO" ref="sessionDAO"/>
+        <property name="sessionIdCookieEnabled" value="true"/>
+    </bean>
+
+    <!-- 2.配置cacheManager 需要加入ehcache的jar包以及配置文件（缓存） -->
+    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>
+    </bean>
+
+    <!-- 这里可以对有多个Realm时，对它们验证授权的顺序进行更改 -->
+    <bean id="authenticator" class="org.apache.shiro.authc.pam.ModularRealmAuthenticator">
+
+    </bean>
+
+    <!-- 3.配置realm -->
+    <bean id ="userRealm" class ="com.yt.realms.UserRealm">
+        <property name="credentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <!-- 设置加密方式 -->
+                <property name="hashAlgorithmName" value="MD5"/>
+                <!-- 设置加密次数 -->
+                <property name="hashIterations" value="1024"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- 4.配置lifecycleBeanPostProcessor.可以自定的来调配在spring ioc容器中shiro bean的生命周期方法-->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+    <!-- 5.启用ioc容器中使用shiro的注解，但必须在配置了配置lifecycleBeanPostProcessor之后才可以使用 -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"/>
+
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+
+    <!-- 6.配置shiroFilter. id必须和web.xml中配置的DelegatingFilterProxy的file name一致，但如果web.xml中
+           设置了spring容器filter的bean id，那么这里的id与web.xml中设置的id一致。
+           ps：使用数据库中的权限规则来动态添加验证规则，那么首先自定义一个myShiroFilterFactoryBean，然后将
+           shiroFilter的class指向自定义的ShiroFilterFactoryBean的路径
+     -->
+    <bean id ="shiroFilter" class = "com.yt.filter.MyShiroFilterFactoryBean">
+        <property name ="securityManager" ref ="securityManager"/>
+        <!-- loginUrl认证提交地址，如果没有认证将会请求此地址进行认证，
+        请求地址将由formAuthenticationFilter进行表单认证 -->
+        <property name ="loginUrl" value ="/goLogin"/>
+<!--
+        <property name="successUrl" value="/success"/>
+-->
+        <property name ="unauthorizedUrl" value ="/unauthorized"/>
+        <!-- 配置哪些页面需要受保护，以及访问这些页面需要的权限
+             1.过滤器链定义:从上向下顺序执行，一般将/**放在最下边
+             2.anon可以被匿名访问
+             3.authc必须认证（即登录）后才可以访问
+             4.logout退出登录
+             5.roles 角色过滤器
+             6.filterChainDefinitions约束也可以自定义配置，可从数据库中动态读取权限配置，将权限约束放入数据库中
+             更方便后期的维护和权限的更新
+         -->
+        <property name ="filterChainDefinitions">
+            <value>
+                /userLogin = anon
+                /passwordRecoveryVerificationCodeSent = anon
+                /mailboxResetPassword = anon
+                /test = anon
+                /docToPdf = anon
+                /logout = logout
+            </value>
+        </property>
+
+        <!-- 自定义shiroFilter，shio默认的Filter在roles[user,admin]这种约束下，需同时拥有user、和admin才可以
+        进行访问，自定义filter可根据自己的业务逻辑需要来设置只满足其中一个即可，自定义filter需要继承
+        AuthorizationFilter类并重新isAccessAllowed方法-->
+        <property name="filters">
+            <map>
+                <entry key="roles">
+                    <bean class="com.yt.filter.MyShiroFilter"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>
