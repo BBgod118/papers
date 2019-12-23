@@ -7,7 +7,9 @@ import com.yt.utils.MD5;
 import com.yt.utils.PageDo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -283,5 +285,15 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public int insertRolePermission(int role_id, int permission_id) {
         return adminMapper.insertRolePermission(role_id, permission_id);
+    }
+
+    @Override
+    public int saveNotice(int admin_id, String content, String title, String author, Date time) {
+        return adminMapper.saveNotice(admin_id, content, title, author, time);
+    }
+
+    @Override
+    public Notice queryNotice(int admin_id) {
+        return adminMapper.queryNotice(admin_id);
     }
 }

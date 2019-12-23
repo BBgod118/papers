@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.springframework:spring-jdbc:5.0.4.RELEASE">
     <CLASSES>
-      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/org/springframework/spring-jdbc/5.0.4.RELEASE/spring-jdbc-5.0.4.RELEASE.jar!/" />
+      <root url="jar://D:/maven/apache-maven-3.6.1/repository/org/springframework/spring-jdbc/5.0.4.RELEASE/spring-jdbc-5.0.4.RELEASE.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/org/springframework/spring-jdbc/5.0.4.RELEASE/spring-jdbc-5.0.4.RELEASE-javadoc.jar!/" />
+      <root url="jar://D:/maven/apache-maven-3.6.1/repository/org/springframework/spring-jdbc/5.0.4.RELEASE/spring-jdbc-5.0.4.RELEASE-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://D:/Maven-3.6.1/apache-maven-3.6.1-bin/repository/org/springframework/spring-jdbc/5.0.4.RELEASE/spring-jdbc-5.0.4.RELEASE-sources.jar!/" />
+      <root url="jar://D:/maven/apache-maven-3.6.1/repository/org/springframework/spring-jdbc/5.0.4.RELEASE/spring-jdbc-5.0.4.RELEASE-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

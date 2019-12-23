@@ -148,4 +148,8 @@ public interface Constants {
      * 成功
      */
     Integer SUCCESS = 100;
+    /**
+     * 图片路径
+     */
+    String url = "../papers/images/";
 }

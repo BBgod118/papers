@@ -3,6 +3,7 @@ package com.yt.service;
 import com.yt.pojo.*;
 import com.yt.utils.PageDo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -200,4 +201,18 @@ public interface AdminService {
      * @return
      */
     int insertRolePermission(int role_id, int permission_id);
+
+
+    /**
+     * 公告发布
+     */
+    int saveNotice(int admin_id, String content, String title, String author, Date time);
+
+    /**
+     * 公告查询
+     *
+     * @param admin_id 管理员id
+     * @return
+     */
+    Notice queryNotice(int admin_id);
 }

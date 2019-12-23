@@ -3,6 +3,7 @@ package com.yt.dao;
 import com.yt.pojo.*;
 import org.apache.ibatis.annotations.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -182,4 +183,28 @@ public interface AdminMapper {
      */
     @Insert("INSERT INTO role_permission (role_id, permission_id) VALUES (#{role_id}, #{permission_id})")
     int insertRolePermission(@Param("role_id") int role_id, @Param("permission_id") int permission_id);
+
+    /**
+     * 公告发布
+     *
+     * @param content
+     * @param title
+     * @param author
+     * @param time
+     * @return
+     */
+    @Insert("INSERT INTO notice (admin_id, content, title, author, time) VALUES" +
+            " (#{admin_id}, #{content}, #{title}, #{author}, #{time})")
+    int saveNotice(@Param("admin_id") int admin_id,@Param("content") String content,
+                   @Param("title") String title, @Param("author") String author,
+                   @Param("time") Date time);
+
+    /**
+     * 公告查询
+     *
+     * @param admin_id 管理员id
+     * @return
+     */
+    @Select("SELECT * FROM notice WHERE admin_id= #{admin_id}")
+    Notice queryNotice(@Param("admin_id") int admin_id);
 }

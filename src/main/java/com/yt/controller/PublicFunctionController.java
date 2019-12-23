@@ -18,8 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -114,6 +113,34 @@ public class PublicFunctionController {
             }
         }
         return Result.failure(ResultCodeEnum.FILE_DOES_NOT_EXIST);
+    }
+
+    /**
+     * 保存文件，直接以multipartFile形式
+     * @param uploadfile
+     * @return 返回文件名
+     * @throws IOException
+     */
+    @RequestMapping(value = "/adminImage", method = RequestMethod.POST)
+    public Result  adminImage(@RequestParam("uploadfile") MultipartFile uploadfile) throws IOException {
+        String path = "C:/Program Files/apache-tomcat-9.0.13/webapps/papers/images";
+        //获取原文件名
+        String newName =uploadfile.getOriginalFilename();
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        FileInputStream fileInputStream = (FileInputStream) uploadfile.getInputStream();
+        BufferedOutputStream bos = new BufferedOutputStream(
+                new FileOutputStream(path + File.separator + newName));
+        byte[] bs = new byte[1024];
+        int len;
+        while ((len = fileInputStream.read(bs)) != -1) {
+            bos.write(bs, 0, len);
+        }
+        bos.flush();
+        bos.close();
+        return Result.success(Constants.url+newName);
     }
 
     /**
